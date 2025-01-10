@@ -1,8 +1,9 @@
 <template>
   <div id="tool">
-    <el-button @click="startHandler" type="primary" size="mini">{{
+    <el-button @click="handleRun" type="primary" size="large">{{
       running ? '停止' : '开始'
     }}</el-button>
+    <el-button @click="startHandler" type="primary" size="large">奖项选取</el-button>
     <el-button size="mini" @click="showRemoveoptions = true">
       重置
     </el-button>
@@ -17,6 +18,7 @@
       :visible.sync="showSetwat"
       class="setwat-dialog"
       width="400px"
+      @keydown.space.prevent="onSubmit"
     >
       <el-form ref="form" :model="form" label-width="80px" size="mini">
         <el-form-item label="抽取奖项">
@@ -43,7 +45,7 @@
           </span>
         </el-form-item>
 
-        <el-form-item label="抽取方式">
+        <el-form-item label="抽取方式" >
           <el-select v-model="form.mode" placeholder="请选取本次抽取方式">
             <el-option label="抽1人" :value="1"></el-option>
             <el-option label="抽5人" :value="5"></el-option>
@@ -192,11 +194,12 @@ export default {
       removeInfo: { type: 0 },
       form: {
         category: '',
-        mode: 1,
-        qty: 1,
+        mode: 99,
+        qty: 10,
         allin: false
       },
-      listStr: ''
+      listStr: '',
+      keyPressed: null, 
     };
   },
   watch: {
@@ -204,9 +207,24 @@ export default {
       if (!v) {
         this.removeInfo.type = 0;
       }
-    }
+    },
   },
   methods: {
+    handleRun() {
+      if (this.running) {
+        this.startHandler();
+      } else {
+        this.onSubmit();
+      }
+    },
+    handleKeydown(event) {
+      this.keyPressed = event.key; // 捕获键值
+      // console.log(`Key pressed: ${event.key}`);
+      // 添加其他逻辑，比如条件判断
+      if (event.key === "Enter" || event.key === " ") {
+        this.handleRun();
+      }
+    },
     resetConfig() {
       const type = this.removeInfo.type;
       this.$confirm('此操作将重置所选数据，是否继续?', '提示', {
@@ -262,22 +280,43 @@ export default {
     },
     onSubmit() {
       if (!this.form.category) {
-        return this.$message.error('请选择本次抽取的奖项');
+        if (!this.showSetwat){
+          this.showSetwat = true
+        }
+        this.form.category = this.categorys[this.categorys.length - 1].value
+        // return this.$message.error('请选择本次抽取的奖项');
       }
       if (this.remain <= 0) {
-        return this.$message.error('该奖项剩余人数不足');
+        // if (!this.form.category) {
+        //   this.form.category = this.categorys[this.categorys.length - 1].value
+        // } else {
+        //   for (let index = 0; index < this.categorys.length; index++) {
+        //     const element = this.categorys[index];
+        //     if (this.form.category === element.value) {
+        //       if (index < 1) {
+        //         return this.$message.error('奖项剩余人数不足');
+        //       }
+        //       this.form.category = this.categorys[index - 1].value;
+        //       break;
+        //     }
+        //   }
+        // }
+        this.showSetwat = true
+        return this.$message.error('奖项：'+conversionCategoryName(this.form.category)+' 剩余人数不足，请选择其他奖项！ ');
       }
       if (this.form.mode === 99) {
         if (this.form.qty <= 0) {
           return this.$message.error('必须输入本次抽取人数');
         }
         if (this.form.qty > this.remain) {
-          return this.$message.error('本次抽奖人数已超过本奖项的剩余人数');
+          this.form.qty = this.remain
+          // return this.$message.error('本次抽奖人数已超过本奖项的剩余人数');
         }
       }
-      if (this.form.mode === 1 || this.form.mode === 5) {
+      if (this.form.mode > 0 && this.form.mode < 99) {
         if (this.form.mode > this.remain) {
-          return this.$message.error('本次抽奖人数已超过本奖项的剩余人数');
+          // this.form.mode = this.remain
+          return this.$message.error('本次抽奖人数已超过本奖项的剩余人数'+this.remain);
         }
       }
       this.showSetwat = false;
@@ -324,7 +363,13 @@ export default {
         this.$emit('resetConfig');
       });
     }
-  }
+  },
+  mounted() {
+    window.addEventListener("keydown", this.handleKeydown);
+  },
+  beforeUnmount() {
+    window.removeEventListener("keydown", this.handleKeydown);
+  },
 };
 </script>
 <style lang="scss">
