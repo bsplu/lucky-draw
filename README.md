@@ -72,9 +72,15 @@ npm run build
 ```
 ### 打包（可执行文件）
 ``` bash
+# 默认当前平台
 npm run electron:build
+# 指定构建win平台
+npm run electron:build -- --win
 ```
 注意：在Linux环境下打包win环境，需要安装wine
+``` bash
+sudo apt install wine
+```
 
 ## License
 
