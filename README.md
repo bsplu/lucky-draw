@@ -50,13 +50,31 @@
 
 - 本抽奖程序的 windows 软件版本下载[安装包](https://github.com/vitozyf/lucky-draw/releases)
 
-## Donation
-
-如果这个开源项目对您有帮助，请作者喝杯咖啡吧
-
-Email: vito.z@qq.com
-
-![payimg](./public/pay.png)
+## 开发者
+如果想在改程序上进行二次开发，可以参考如下版本配置，太高版本会导致程序依赖报错。
+``` bash
+node --version
+v14.21.3
+npm --version
+6.14.18
+```
+### 安装依赖
+``` bash
+npm install
+```
+### 运行调试
+``` bash
+npm run dev
+```
+### 打包(静态网站)
+``` bash
+npm run build
+```
+### 打包（可执行文件）
+``` bash
+npm run electron:build
+```
+注意：在Linux环境下打包win环境，需要安装wine
 
 ## License
 

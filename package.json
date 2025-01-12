@@ -3,11 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
+  "main": "main.js", 
   "scripts": {
     "dev": "vue-cli-service serve",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "electron:serve": "electron .", 
+    "electron:build": "electron-builder" 
   },
   "dependencies": {
     "core-js": "^3.4.3",
@@ -30,6 +33,22 @@
     "node-sass": "^5.0.0",
     "prettier": "^1.19.1",
     "sass-loader": "^10.1.1",
-    "vue-template-compiler": "^2.6.10"
+    "vue-template-compiler": "^2.6.10",
+    "electron": "^33.3.1",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.luckydraw.app", 
+    "productName": "LuckyDraw", 
+    "directories": {
+      "output": "dist_electron"
+    },
+    "files": [
+      "dist/**/*", 
+      "main.js" 
+    ],
+    "win": {
+      "target": "nsis"
+    }
   }
 }
