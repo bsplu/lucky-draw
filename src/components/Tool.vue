@@ -225,6 +225,15 @@ export default {
         this.handleRun();
       }
     },
+    handleClick(event) {
+      // console.log(`Mouse clicked at: ${event.clientX}, ${event.clientY}`);
+      if (event.target.id === 'rootcanvas') {
+        const resbox = document.getElementById('resbox');
+        if (resbox && resbox.style.display === 'none') {
+          this.handleRun();
+        }
+      }
+    },
     resetConfig() {
       const type = this.removeInfo.type;
       this.$confirm('此操作将重置所选数据，是否继续?', '提示', {
@@ -366,9 +375,11 @@ export default {
   },
   mounted() {
     window.addEventListener("keydown", this.handleKeydown);
+    window.addEventListener("click", this.handleClick);
   },
   beforeUnmount() {
     window.removeEventListener("keydown", this.handleKeydown);
+    window.removeEventListener("click", this.handleClick);
   },
 };
 </script>
